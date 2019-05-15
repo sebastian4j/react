@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+// https://reactjs.org/docs/state-and-lifecycle.html
+
 const listado = [
   {
     title: 'React',
@@ -25,8 +27,36 @@ class App extends Component {
     super(props);
     this.state = { // cada vez que se cambia el estado render es lanzado
       listado,
-      inicio: new Date().getTime()
+      inicio: new Date()
     };
+    // es necesario porque no es automatico el binding this con la instancia de la clase
+    this.quitar = this.quitar.bind(this);
+  }
+
+  click () {
+    console.log('undefined: ', this);
+  }
+  
+  quitar(id) {
+    // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
+    this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
+  }
+
+  componentDidMount() { // luego de ser renderizado en el DOM
+    console.log('post renderizado');
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  componentWillUnmount() { // se elimina
+    console.log('eliminado');
+    clearInterval(this.timerID);
+  }
+
+  tick() {
+    this.setState({inicio: new Date()});
   }
 
   render() {
@@ -39,12 +69,13 @@ class App extends Component {
               <span>{item.author}</span>
               <span></span>
               <span>
-                <button onClick={()=> this.quitar(item.objectID)}>quitar</button>
+                <button onClick={() => this.quitar(item.objectID)}>quitar</button>
+                <button onClick={this.click}>click</button>
               </span>
             </div>
           )
         }
-        {this.state.inicio}
+        {this.state.inicio.toISOString()}
       </div>
     );
   }
