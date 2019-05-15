@@ -19,7 +19,7 @@ const list = [
     objectID: 1,
   },
 ];
-
+// clases son usadas para declarar componentes = ES6 class component
 class App extends Component {
   render() {
     return (
