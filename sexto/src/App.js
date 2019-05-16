@@ -34,6 +34,9 @@ class App extends Component {
     // es necesario porque no es automatico el binding this con la instancia de la clase
     this.quitar = this.quitar.bind(this);
     this.busqueda = this.busqueda.bind(this);
+    // sin el binding queda undefined el this en click() {...}
+    // usando quitarArrow () {...} tiene acceso al this por que usa arrow 
+    // this.click = this.click.bind(this);
   }
 
   click() {
@@ -45,7 +48,7 @@ class App extends Component {
     this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
   }
 
-  // se puede NO hacer en bind en el constructor y ocupar =>
+  // se puede NO hacer bind en el constructor y ocupar => porque accede al this
   quitarArrow = (id) => {
     this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
   }
