@@ -100,14 +100,17 @@ class Button extends Component {
   }
 }
 
+// ******************************
 // Functional Stateless Components
+// ******************************
 // recibe las propiedades 
 // no guarda estado (no hay this)
 // no tiene eventos del ciclo de vida
 
-// function Search (props) { // sin usar destructuring
-function Search({ valor, cambio, children }) { // usando destructuring
-  // const { valor, cambio, children } = props; // tiene todas las propiedades que se le pasan al componente (sin usar destructuring)
+/** 
+// opcion 1sin usar destructuring
+function Search (props) {
+  const { valor, cambio, children } = props; // tiene todas las propiedades que se le pasan al componente
   return (
     <form>
       {children}
@@ -115,7 +118,28 @@ function Search({ valor, cambio, children }) { // usando destructuring
     </form>
   );
 }
+**/
 
+/**
+// usando destructuring
+function Search({ valor, cambio, children }) {
+  return (
+    <form>
+      {children}
+      <input type='text' value={valor} onChange={cambio} />
+    </form>
+  );
+}
+**/
+
+const Search = ({ valor, cambio, children }) =>
+  // si es necesario se puede agregar {...} para tener mas operaciones y no solo input-output
+  // {return ( 
+  <form>
+    {children}
+    <input type='text' value={valor} onChange={cambio} />
+  </form>
+// )}
 class Table extends Component {
   filtrar(searchTerm) {
     return function (item) {
