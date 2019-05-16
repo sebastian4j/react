@@ -48,3 +48,12 @@ console.log(c);
 console.log(c.valor());
  // ctrl + alt + n
 
+const user = {nombre: 'sebastian', apellido: 'avila'};
+console.log(user);
+const {nombre, apellido} = user;
+console.log(nombre, apellido);
+
+const datos = [1,2,3,4,5];
+const  [aa,bb,cc] = datos;
+console.log(aa,bb,cc);
+

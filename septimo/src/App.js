@@ -23,6 +23,11 @@ const listado = [
   }
 ];
 
+function filtrar(searchTerm) {
+  return function (item) {
+    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+}
 class App extends Component {
   constructor(props) { // obligatorio porque extiende Component
     super(props);
@@ -34,22 +39,10 @@ class App extends Component {
     // es necesario porque no es automatico el binding this con la instancia de la clase
     this.quitar = this.quitar.bind(this);
     this.busqueda = this.busqueda.bind(this);
-    // sin el binding queda undefined el this en click() {...}, xq definen su propio this
-    // usando quitarArrow () {...} tiene acceso al this por que usa arrow (accede al this del contexto que la envuelve)
-    // this.click = this.click.bind(this);
-  }
-
-  click() {
-    console.log('undefined: ', this);
   }
 
   quitar(id) {
     // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
-    this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
-  }
-
-  // se puede NO hacer bind en el constructor y ocupar => porque accede al this
-  quitarArrow = (id) => {
     this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
   }
 
@@ -77,47 +70,54 @@ class App extends Component {
     console.log(busca)
   }
 
-  // opcion de filtro 1
-  filtro(item) {
-    return this.state.busca != '' ?
-      item.title.toLocaleLowerCase().includes(this.state.busca.toLocaleLowerCase()) :
-      // item.title.toLowerCase().indexOf(this.state.busca.toLowerCase()) !== -1;
-      true;
-  }
-
-  // opcion de filtro 2
-  filtro2(texto) {
-    return item => item.title.toLocaleLowerCase().includes(texto.toLocaleLowerCase());
-  }
-
-
   // cada vez que el estado cambia se invoca
   render() {
-    const {listado, busca} = this.state; // destructured, similar a: var listado = this.state.listado;
+    const { listado, busca } = this.state; // destructured, similar a: var listado = this.state.listado;
     return (
       <div className='App'>
-        <form>
-          <input type='text' onChange={this.busqueda} value={busca}/>
-        </form>
-        {
-          //this.state.listado.filter(item => this.filtro(item))
-          listado.filter(this.filtro2(this.state.busca))
-            .map(item =>
-              <div key={item.objectID}>
-                <div>url: {item.url}</div>
-                <div>autor: {item.author}</div>
-                <div>titulo: {item.title}</div>
-                <div>
-                  <button onClick={() => this.quitar(item.objectID)}>quitar</button>
-                  <button onClick={this.click}>click</button>
-                </div>
-              </div>
-            )
-        }
+        <Search
+          valor={busca}
+          cambio={this.busqueda}
+        />
+        <Table
+          list={listado}
+          pattern={busca}
+          quitar={this.quitar}
+        />
         {this.state.inicio.toISOString()}
       </div>
     );
   }
 }
 
+class Search extends Component {
+  render() {
+    const { valor, cambio } = this.props;
+    return (
+      <form>
+        <input type='text' value={valor} onChange={cambio} />
+      </form>
+    );
+  }
+}
+
+class Table extends Component {
+  render() {
+    const { list, pattern, quitar } = this.props;
+    return (
+      <div>
+        {list.filter(filtrar(pattern)).map(item =>
+          <div key={item.objectID}>
+            <div>url: {item.url}</div>
+            <div>autor: {item.author}</div>
+            <div>titulo: {item.title}</div>
+            <div>
+              <button onClick={() => quitar(item.objectID)}>quitar</button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+}
 export default App;
