@@ -23,7 +23,7 @@ const listado = [
   }
 ];
 
-
+// ES6 Class Components
 class App extends Component {
   constructor(props) { // obligatorio porque extiende Component
     super(props);
@@ -100,16 +100,20 @@ class Button extends Component {
   }
 }
 
-class Search extends Component {
-  render() {
-    const { valor, cambio, children } = this.props; // tiene todas las propiedades que se le pasan al componente
-    return (
-      <form>
-        {children}
-        <input type='text' value={valor} onChange={cambio} />
-      </form>
-    );
-  }
+// Functional Stateless Components
+// recibe las propiedades 
+// no guarda estado (no hay this)
+// no tiene eventos del ciclo de vida
+
+// function Search (props) { // sin usar destructuring
+function Search({ valor, cambio, children }) { // usando destructuring
+  // const { valor, cambio, children } = props; // tiene todas las propiedades que se le pasan al componente (sin usar destructuring)
+  return (
+    <form>
+      {children}
+      <input type='text' value={valor} onChange={cambio} />
+    </form>
+  );
 }
 
 class Table extends Component {
