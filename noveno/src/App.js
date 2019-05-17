@@ -25,8 +25,7 @@ const listado = [
 
 // ES6 Class Components
 class App extends Component {
-  // el constructor se llama cuando se instancia la clase
-  constructor(props) { // render es obligatorio porque extiende Component
+  constructor(props) { // obligatorio porque extiende Component
     super(props);
     this.state = { // cada vez que se cambia el estado render es lanzado
       listado,
@@ -43,48 +42,13 @@ class App extends Component {
     this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
   }
 
-  componentWillMount() {
-    // se llama antes del render pero despues del constructor
-  }
-
-  componentDidMount() { // luego de ser renderizado en el DOM (post render())
+  componentDidMount() { // luego de ser renderizado en el DOM
     console.log('post renderizado');
     this.timerID = setInterval(
       () => this.tick(),
       1000
     );
   }
-
-  /*
-  
-  ***************
-  *** eventos ***
-  ***************
-
-  proceso del montaje:
-
-• constructor(props) // instanciación
-• componentWillMount() // modificar el estado interno antes del render
-• render() // no debe modificar el estado del componente
-• componentDidMount() // acá hacer las peticiones asíncronas
-
-  cambio en state o props:
-
-• componentWillReceiveProps(nextProps) // se pueden comparar this.props con nextProps y cambiar las que sean necesarias
-• shouldComponentUpdate(nextProps, nextState):boolean // permite cancelar/permitir el renderizado del componente y sus hijos
-• componentWillUpdate(nextProps, nextState) // antes de render, ultima opcion para realizar preparaciones, NO se pueden hacer setState() usarlo en componentWillReceiveProps()
-• render()
-• componentDidUpdate(prevProps, prevState)) // post render, se pueden realizar dom operations o mas peticiones asincronas
-
-  unmounting:
-
-• componentWillUnmount() // antes de desmontar el componente, operaciones de limpieza
-
-  otros:
-
-• componentDidCatch(error, info) // informacion de error ocurrido, se puede guardar info en el status para poder mostrarla al usuario
-
-  */
 
   componentWillUnmount() { // se elimina
     console.log('eliminado');
@@ -102,7 +66,7 @@ class App extends Component {
     console.log(busca)
   }
 
-  // cada vez que el estado cambia se invoca y la primera vez que se inserta en el dom
+  // cada vez que el estado cambia se invoca
   render() {
     const { listado, busca } = this.state; // destructured, similar a: var listado = this.state.listado;
     return (
