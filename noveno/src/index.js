@@ -4,11 +4,8 @@ import './index.css';
 import App from './App';
 
 ReactDOM.render(
-<div>
     <App />
-    <br /><br />
-    <App />
-</div>, document.getElementById('root'));
+    , document.getElementById('root'));
 
 if (module.hot) {
     module.hot.accept();

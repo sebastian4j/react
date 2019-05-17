@@ -15,7 +15,7 @@ class App extends Component {
     super(props);
     this.state = { // cada vez que se cambia el estado (setState) render es lanzado
       result: null,
-      listado: [],
+      listado: null,
       inicio: new Date(),
       busca: DEFAULT_QUERY
     };
@@ -26,10 +26,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
+    console.log('componentDidMount')
     const { busca } = this.state;
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${busca}`)
       .then(response => response.json()) // sacar el json es obligatorio con el native fetch al tratar con json
@@ -46,18 +43,12 @@ class App extends Component {
     // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
     const listadoActual = this.state.listado;
     listadoActual.hits = this.state.listado.hits.filter(item => item.objectID !== id);
-
     this.setState({ listado: listadoActual });
   }
 
 
   componentWillUnmount() { // se elimina
     console.log('eliminado');
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    this.setState({ inicio: new Date() });
   }
 
   // synthetic React event
@@ -69,7 +60,10 @@ class App extends Component {
 
   // cada vez que el estado cambia se invoca
   render() {
+    console.log('render')
     const { listado, busca } = this.state; // destructured, similar a: var listado = this.state.listado;
+    // si 'listado' se inicializa en el constructor con null NO se dibuja el componente (return null), si se coloca [] se dibuja sin datos
+    // los eventos del ciclo de vida no se interrumpen por ser null
     if (!listado) { return null; }
     return (
       <div className='page'>
