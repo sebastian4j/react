@@ -39,11 +39,16 @@ class App extends Component {
   }
 
   quitar(id) {
-    console.log(id);
     // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
-    const listadoActual = this.state.listado;
-    listadoActual.hits = this.state.listado.hits.filter(item => item.objectID !== id);
-    this.setState({ listado: listadoActual });
+    // no se deberia mutar el estado del objeto: 
+
+    // const listadoActual = this.state.listado;
+    // listadoActual.hits = this.state.listado.hits.filter(item => item.objectID !== id);
+    // this.setState({ listado: listadoActual });
+
+    // con Object.assign({}, {}, {}, ...) se ase un merge en el primer elemento de todos los demas 
+    const actualizado = Object.assign({}, this.state.listado, {'hits': this.state.listado.hits.filter(item => item.objectID !== id)}); 
+    this.setState({ listado: actualizado });
   }
 
 
