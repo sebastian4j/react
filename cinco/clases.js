@@ -57,3 +57,14 @@ const datos = [1,2,3,4,5];
 const  [aa,bb,cc] = datos;
 console.log(aa,bb,cc);
 
+// spread operator: todos los valores del arreglo son copiados a otro
+const uno = [1,2,3];
+const dos = [4,5];
+const tres = [...uno, ...dos, 6];
+
+console.log(tres);
+
+const cuatro = {fn: 'nombre', ln: 'apellido'};
+const cinco = {edad: 28};
+const seis = {...cuatro, ...cinco};
+console.log(seis);

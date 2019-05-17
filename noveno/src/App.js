@@ -44,7 +44,7 @@ class App extends Component {
     // no se deberia mutar el estado del objeto:
     // this.state.result.hits = this.state.listado.hits.filter(item => item.objectID !== id);
 
-    // preferir generar nuevos estados y mantenerlos inmutables:
+    // preferir generar nuevos estados y mantenerlos inmutables -no cambiar el estado directamente, generar uno nuevo basado en el actual-:
     // con Object.assign({}, {}, {}, ...) se hace un merge en el primer elemento de todos los demas 
     const actualizado = Object.assign({}, this.state.listado, {'hits': this.state.listado.hits.filter(item => item.objectID !== id)}); 
     this.setState({ listado: actualizado });
