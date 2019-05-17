@@ -1,54 +1,55 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const DEFAULT_QUERY = 'redux';
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+
 // https://reactjs.org/docs/state-and-lifecycle.html
 // https://reactjs.org/docs/handling-events.html
 
-const listado = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react/d',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 1,
-  },
-  {
-    title: 'tcaer',
-    url: 'https://google.cl/e',
-    author: 'otro autor',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  }
-];
-
 // ES6 Class Components
 class App extends Component {
-  constructor(props) { // obligatorio porque extiende Component
+  constructor(props) {
     super(props);
-    this.state = { // cada vez que se cambia el estado render es lanzado
-      listado,
+    this.state = { // cada vez que se cambia el estado (setState) render es lanzado
+      result: null,
+      listado: [],
       inicio: new Date(),
-      busca: ''
+      busca: DEFAULT_QUERY
     };
     // es necesario porque no es automatico el binding this con la instancia de la clase
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.quitar = this.quitar.bind(this);
     this.busqueda = this.busqueda.bind(this);
   }
 
-  quitar(id) {
-    // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
-    this.setState({ listado: this.state.listado.filter(item => item.objectID !== id) });
-  }
-
-  componentDidMount() { // luego de ser renderizado en el DOM
-    console.log('post renderizado');
+  componentDidMount() {
     this.timerID = setInterval(
       () => this.tick(),
       1000
     );
+    const { busca } = this.state;
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${busca}`)
+      .then(response => response.json()) // sacar el json es obligatorio con el native fetch al tratar con json
+      .then(result => this.setSearchTopStories(result))
+      .catch(error => error);
   }
+  setSearchTopStories(result) {
+    console.log(result);
+    this.setState({ listado: result });
+  }
+
+  quitar(id) {
+    console.log(id);
+    // con filter obtiene una nueva lista inmutable (que es lo que le agregada a react...), no cambia la actual
+    const listadoActual = this.state.listado;
+    listadoActual.hits = this.state.listado.hits.filter(item => item.objectID !== id);
+
+    this.setState({ listado: listadoActual });
+  }
+
 
   componentWillUnmount() { // se elimina
     console.log('eliminado');
@@ -69,6 +70,7 @@ class App extends Component {
   // cada vez que el estado cambia se invoca
   render() {
     const { listado, busca } = this.state; // destructured, similar a: var listado = this.state.listado;
+    if (!listado) { return null; }
     return (
       <div className='page'>
         <div className='interactions'>
@@ -79,7 +81,7 @@ class App extends Component {
           </Search>
         </div >
         <Table
-          list={listado}
+          list={listado.hits}
           pattern={busca}
           quitar={this.quitar}
         />
@@ -140,7 +142,7 @@ const Search = ({ valor, cambio, children }) =>
 
 function filtrar(searchTerm) {
   return function (item) {
-    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    return item.title ? item.title.toLowerCase().includes(searchTerm.toLowerCase()) : false;
   }
 }
 
@@ -154,7 +156,7 @@ const smallColumn = {
   width: '10%',
 };
 
-const Table = ({ list, pattern, quitar }) =>
+const Table = ({ list = [], pattern, quitar }) =>
   <div className='table'>
     {list.filter(filtrar(pattern)).map(item =>
       <div key={item.objectID} className='table-row'>
