@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import './App.css';
+import './index.css';
+import axios from 'axios';
+// npm install axios
 
-const DEFAULT_QUERY = 'amarillo'; // cangrejo
-const PATH_BASE = 'https://hn.algolia.com/api/v1';
-const PATH_SEARCH = '/search';
-const PARAM_SEARCH = 'query=';
-const PARAM_PAGE = 'page=';
-const DEFAULT_HPP = '50';
-const PARAM_HPP = 'hitsPerPage=';
+import {
+  DEFAULT_QUERY,
+  DEFAULT_HPP,
+  PATH_BASE,
+  PATH_SEARCH,
+  PARAM_SEARCH,
+  PARAM_PAGE,
+  PARAM_HPP,
+} from '../../constants';
 
 // https://reactjs.org/docs/state-and-lifecycle.html
 // https://reactjs.org/docs/handling-events.html
@@ -50,10 +54,15 @@ class App extends Component {
   }
 
   fetchSearchTopStories(searchTerm, page = 0) {
+    /*
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
-      .then(response => response.json())
-      .then(result => this.setSearchTopStories(result))
-      .catch(error => error);
+    .then(response => response.json())
+    .then(result => this.setSearchTopStories(result))
+    .catch(error => error);
+    */
+    axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
+      .then(result => this.setSearchTopStories(result.data))
+      .catch(error => this.setState({ error }));
   }
 
   onSearchSubmit(event) {
@@ -89,7 +98,7 @@ class App extends Component {
   render() {
     console.log('render')
 
-    const { listado, busca } = this.state; // destructured, similar a: var listado = this.state.listado;
+    const { listado, busca, error } = this.state; // destructured, similar a: var listado = this.state.listado;
     // si 'listado' se inicializa en el constructor con null NO se dibuja el componente (return null), si se coloca [] se dibuja sin datos
     // los eventos del ciclo de vida no se interrumpen por ser null
     let paginaSiguiente;
@@ -113,6 +122,10 @@ class App extends Component {
           <Button click={() => this.fetchSearchTopStories(busca, paginaSiguiente)}>Más Resultados</Button>
         </span>
     }
+    /* opcion de error
+    if (error) {
+      return <p>Ocurrio un Error =(</p>
+    } */
     return (
       <div className='page'>
         <div className='interactions'>
@@ -124,7 +137,8 @@ class App extends Component {
             Buscar
           </Search>
         </div >
-        {listado &&
+        {error ? <p> ocurrio un error ...</p> :
+          listado &&
           <Table
             list={listado.hits}
             quitar={this.quitar}

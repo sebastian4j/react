@@ -1,3 +1,5 @@
+// ctrl + alt + n
+
 const abcd = 'xyz';
 
 const c = {
