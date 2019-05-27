@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './index.css';
 import axios from 'axios';
+import { Calendar } from 'primereact/calendar';
+import { Checkbox } from 'primereact/checkbox';
+import { Button } from 'primereact/button';
+
 // npm install axios
 
 import {
@@ -119,7 +123,7 @@ class App extends Component {
     } else {
       botones =
         <span>
-          <Button click={() => this.fetchSearchTopStories(busca, paginaSiguiente)}>Más Resultados</Button>
+          <Boton click={() => this.fetchSearchTopStories(busca, paginaSiguiente)}>Más Resultados</Boton>
         </span>
     }
     /* opcion de error
@@ -128,6 +132,13 @@ class App extends Component {
     } */
     return (
       <div className='page'>
+        <Button label="boton1" icon="pi pi-check" className="p-button-danger" />
+        <Button label="boton2" icon="pi pi-check" iconPos="right" className="p-button-info" />
+
+        <Calendar inline={false} value={this.state.date}
+          onChange={(e) => this.setState({ date: e.value })}></Calendar>
+        <Checkbox onChange={e => this.setState({ checked: e.checked })} checked={this.state.checked}>
+        </Checkbox>
         <div className='interactions'>
           <Search
             valor={busca}
@@ -162,7 +173,7 @@ class App extends Component {
 // no tiene eventos del ciclo de vida
 
 // clase tiene '' por defecto y no undefined
-const Button = ({ click, clase = '', children }) =>
+const Boton = ({ click, clase = '', children }) =>
   <button className={clase} onClick={click}>
     {children}
   </button>
@@ -231,7 +242,7 @@ const Table = ({ list = [], quitar }) =>
           {item.points}
         </span>
         <span style={smallColumn}>
-          <Button click={() => quitar(item.objectID)} clase='button-inline'>Quitar</Button>
+          <Boton click={() => quitar(item.objectID)} clase='button-inline'>Quitar</Boton>
         </span>
       </div>
     )}
